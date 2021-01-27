@@ -129,7 +129,7 @@ export default class AhoCorasick {
 	 * @param text search text
 	 * 
 	 */
-	public searchWord(text: string) {
+	public search(text: string) {
 		let words = [];
 		let currentNode = this.tireTreeRoot;
 		for (let i = 0; i < text.length; i++) {
