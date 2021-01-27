@@ -40,19 +40,27 @@ export default class AhoCorasick {
 		this.currentWordSet = new Set();
 		const cleanedWordList = this.getFilterWordList(wordList);
 		// this.tireTreeRoot = this.addNewNode();
-		this.addWordList(this.tireTreeRoot, cleanedWordList);
-		this.setBackNode(this.tireTreeRoot);
+		this.addWordList(cleanedWordList);
 	}
+
+
+	/**
+	 * @param keywordList public method for additional word
+	 */
+	public addWord(keywordList: string[]): void {
+		this.addWordList(this.getFilterWordList(keywordList));
+	}
+
 
 	/**
 	 * @param root 
 	 * @param keywordList 
 	 * set the tireTree path(get match success status)
 	 */
-	public addWordList(root: ACTreeNode, keywordList: string[]): void {
+	private addWordList(keywordList: string[]): void {
 		keywordList.forEach(word => {
-			let currentNode = root;
-			let currentNodeSet = root.children;
+			let currentNode = this.tireTreeRoot;
+			let currentNodeSet = this.tireTreeRoot.children;
 			let len = word.length;
             for (let i = 0; i < len; i++) {
 				// new path
@@ -61,7 +69,7 @@ export default class AhoCorasick {
                         char: word[i],
 						status: ++this.currentState,
 						// initial state. back to root node
-						backNode: root,
+						backNode: this.tireTreeRoot,
 						parent: currentNode,
                         isMatch: i === len - 1,
 						children: {},
@@ -75,6 +83,8 @@ export default class AhoCorasick {
                 currentNodeSet = currentNodeSet[word[i]].children;
             }
 		});
+		// set backNode
+		this.setBackNode(this.tireTreeRoot);
 	}
 
 	/**
