@@ -6,7 +6,6 @@ export type ACTreeNode = {
 	parent: ACTreeNode | null,
 	isMatch: boolean,
 	children: ACTreeContainer,
-	depth: number
 }
 
 // child container
@@ -18,9 +17,18 @@ export default class AhoCorasick {
 	currentState: number;
 	tireTreeRoot: ACTreeNode;
 	currentWordSet: Set<string>;
+	/**
+	 * default is /\s+/g, skip all space
+	 */
+	regPattern: RegExp;
 
-	constructor(wordList: string[], ignorePatt?: RegExp) {
+	/**
+	 * @param wordList initial word list
+	 * @param ignorePatt Reg pattern
+	 */
+	constructor(wordList: string[], ignorePatt: RegExp = /\s+/g) {
 		this.currentState = 0;
+		this.regPattern = ignorePatt;
 		this.tireTreeRoot = {
 			char: null,
 			status: this.currentState,
@@ -28,14 +36,12 @@ export default class AhoCorasick {
 			isMatch: false,
 			parent: null,
 			children: {},
-			depth: 0
 		}
 		this.currentWordSet = new Set();
-		const cleanedWordList = this.getFilterWordList(wordList, ignorePatt);
+		const cleanedWordList = this.getFilterWordList(wordList);
 		// this.tireTreeRoot = this.addNewNode();
 		this.addWordList(this.tireTreeRoot, cleanedWordList);
 		this.setBackNode(this.tireTreeRoot);
-		console.log(this.tireTreeRoot);
 	}
 
 	/**
@@ -59,9 +65,11 @@ export default class AhoCorasick {
 						parent: currentNode,
                         isMatch: i === len - 1,
 						children: {},
-						depth: i
                     };
-				}
+				} else if (i === len - 1) {
+                    // short word can't match if dont
+                    currentNodeSet[word[i]].isMatch = true;
+                }
 				// get next level
                 currentNode = currentNodeSet[word[i]];
                 currentNodeSet = currentNodeSet[word[i]].children;
@@ -116,6 +124,10 @@ export default class AhoCorasick {
 		let currentNode = this.tireTreeRoot;
 		for (let i = 0; i < text.length; i++) {
 			let char = text[i];
+			// skip
+			if (char.match(this.regPattern)) {
+				continue;
+			}
 			let child = currentNode.children[char];
 			if (!child) {
 				// if doesn't match, find backNode until get root.
@@ -130,15 +142,16 @@ export default class AhoCorasick {
 				}
 			}
 			if (child) {
-				let backNode: ACTreeNode | null = child;
-				while (backNode !== this.tireTreeRoot && backNode) {
+				let backNode: ACTreeNode = child;
+				while (backNode && backNode !== this.tireTreeRoot) {
 					if (backNode.isMatch) {
+						let word = this.getWord(i, backNode)
 						words.push({
-							pos: [i],
-							word: this.getWord(backNode)
+							pos: word.pos,
+							word: word.word
 						})
 					}
-					backNode = backNode.backNode
+					backNode = backNode.backNode as ACTreeNode;
 				}
 				currentNode = child;
 			}
@@ -150,10 +163,8 @@ export default class AhoCorasick {
 	 * @param wordList keyword list
 	 * @param ignorePatt default clean all space
 	 */
-	private getFilterWordList(wordList: string[], ignorePatt?: RegExp): string[] {
-		if (ignorePatt === undefined) {
-			ignorePatt = /\s+/g;
-		}
+	private getFilterWordList(wordList: string[]): string[] {
+		let ignorePatt = this.regPattern;
 		// clean duplicated word
 		const len = wordList.length;
 		for (let i = 0; i < len; i++) {
@@ -165,13 +176,17 @@ export default class AhoCorasick {
 		return Array.from(this.currentWordSet);
 	}
 
-	private getWord(node: ACTreeNode): string {
-		let word = '';
+	private getWord(pos: number ,node: ACTreeNode): { pos: number[], word: string } {
+		let word = '', pre = pos;
 		while (node?.parent && node.char) {
 			word = node.char + word;
 			node = node.parent
+			pre -= 1;
 		}
-		return word;
+		return {
+			pos: [pre + 1, pos],
+			word: word
+		};
 	}
 
 	private getChildNodesArray(child: ACTreeContainer): ACTreeNode[] {
