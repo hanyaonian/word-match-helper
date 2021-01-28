@@ -24,3 +24,13 @@ wordChecker.search('ushers');
 *    { pos: 4, word: 'her' }]
 */
 ````
+###### skip special character
+````js
+// default skip white spaces
+// pass customize reg expression to skip confusion charater
+const wordChecker = new checker(['shit'], /\s+|\*/g);
+wordChecker.search('s h ** i t');
+/* excepted:
+*   [{ pos: 9, word: 'shit' }]
+*/
+````
