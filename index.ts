@@ -26,9 +26,12 @@ export default class AhoCorasick {
 	 * @param wordList initial word list
 	 * @param ignorePatt Reg pattern
 	 */
-	constructor(wordList: string[], ignorePatt: RegExp = /\s+/g) {
+	constructor(wordList: string[], ignorePatt: null | RegExp = /\s+/g) {
 		this.currentState = 0;
-		this.regPattern = ignorePatt;
+		this.regPattern = ignorePatt || /\\/g;
+		if (typeof ignorePatt != typeof RegExp) {
+			// throw Error('wrong type regexp')
+		}
 		this.tireTreeRoot = {
 			char: null,
 			status: this.currentState,
@@ -228,7 +231,7 @@ export default class AhoCorasick {
 
 	private getWord(node: ACTreeNode): string {
 		let word = '';
-		while (node?.parent && node.char) {
+		while (node.parent && node.char) {
 			word = node.char + word;
 			node = node.parent
 		}
