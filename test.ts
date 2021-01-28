@@ -2,8 +2,8 @@ import textHelper from './index'
 
 const testCase = [
 	{
-		key: ['her', 'he', 'she', 'hers'],
-		text: "ushers",
+		key: ['her', 'he', 's h e', 'hers'],
+		text: "us h ers h e he r",
 		expect: [
 			{ pos: 3, word: 'she' },
 			{ pos: 5, word: 'hers' },

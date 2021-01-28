@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "esnext",
-    "module": "commonjs",
+    "module": "umd",
     "outDir": "./dist",
     "strict": true,
     "noImplicitAny": true,
