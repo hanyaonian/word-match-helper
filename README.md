@@ -1,9 +1,14 @@
 # word-match-helper
-Aho–Corasick. Word checking.
+Aho–Corasick based word checking. Match & filter words.
+
+### install
+````
+npm install word-match-helper
+````
 
 ### Basic Usage
 ````javascript
-import checker from PATH
+import checker from 'word-match-helper'
 
 const wordChecker = new checker(['her', 'he', 'hers']);
 wordChecker.search('ushers');
