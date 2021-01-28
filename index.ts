@@ -169,6 +169,48 @@ export default class AhoCorasick {
 	}
 
 	/**
+	 * @param text target text
+	 * @param replacement default '*'
+	 * @return text replace matching word to replacement
+	 * ['he'], 'she' -> 's**'
+	 */
+	public filter(text: string, replacement: string = '*', replaceAll: boolean = false): string {
+		let wordArr = text.split('');
+		let skipWordMap = new Map<number, string>();
+		let matchedWord = this.search(text);
+		matchedWord.sort((pre, next) => pre.pos - next.pos);
+		for (let i = 0; i < matchedWord.length; i++) {
+			let currentWord = matchedWord[i].word;
+			let currentPos = matchedWord[i].pos;
+			let lword = skipWordMap.get(currentPos);
+			if (lword && lword.length < currentWord.length) {
+				// get same position's longest word
+				skipWordMap.set(currentPos, currentWord)
+			}
+			if (!lword) {
+				skipWordMap.set(currentPos, currentWord)
+			}
+		}
+		skipWordMap.forEach((word, pos) => {
+			let i = word.length - 1;
+			let skipped = 0;
+			while (i > 0) {
+				if (word[i] === wordArr[pos - skipped]) {
+					i -= 1;
+				}
+				skipped += 1;
+			}
+			let len = word.length + skipped;
+			if (replaceAll) {
+				wordArr.splice(pos - len, pos, replacement);
+			} else {
+				wordArr.splice(pos - len, pos, ...new Array(len).fill(replacement));
+			}
+		})
+		return wordArr.join('');
+	}
+
+	/**
 	 * @param wordList keyword list
 	 * @param ignorePatt default clean all space
 	 */
