@@ -155,10 +155,9 @@ export default class AhoCorasick {
 				let backNode: ACTreeNode = child;
 				while (backNode && backNode !== this.tireTreeRoot) {
 					if (backNode.isMatch) {
-						let word = this.getWord(i, backNode)
 						words.push({
-							pos: word.pos,
-							word: word.word
+							pos: i,
+							word: this.getWord(backNode)
 						})
 					}
 					backNode = backNode.backNode as ACTreeNode;
@@ -186,17 +185,13 @@ export default class AhoCorasick {
 		return Array.from(this.currentWordSet);
 	}
 
-	private getWord(pos: number ,node: ACTreeNode): { pos: number[], word: string } {
-		let word = '', pre = pos;
+	private getWord(node: ACTreeNode): string {
+		let word = '';
 		while (node?.parent && node.char) {
 			word = node.char + word;
 			node = node.parent
-			pre -= 1;
 		}
-		return {
-			pos: [pre + 1, pos],
-			word: word
-		};
+		return word;
 	}
 
 	private getChildNodesArray(child: ACTreeContainer): ACTreeNode[] {
