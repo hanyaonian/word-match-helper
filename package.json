@@ -1,8 +1,9 @@
 {
   "name": "word-match-helper",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Aho-Corasick based word-matching class. Match & filter words.",
-  "main": "index.js",
+  "source": "index.ts",
+  "main": "dist/index.js",
   "scripts": {
     "test": "tsc && cd ./dist && node test"
   },
@@ -16,7 +17,7 @@
     "word-filter"
   ],
   "author": "MichaelHan",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/hanyaonian/word-match-helper/issues"
   },
