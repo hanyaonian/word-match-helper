@@ -174,7 +174,7 @@ export default class AhoCorasick {
 	 * @return text replace matching word to replacement
 	 * ['he'], 'she' -> 's**'
 	 */
-	public filter(text: string, replacement: string = '*', replaceAll: boolean = false): string {
+	public filter(text: string, replacement: string = '*'): string {
 		let wordArr = text.split('');
 		let skipWordMap = new Map<number, string>();
 		let matchedWord = this.search(text);
@@ -193,19 +193,16 @@ export default class AhoCorasick {
 		}
 		skipWordMap.forEach((word, pos) => {
 			let i = word.length - 1;
-			let skipped = 0;
-			while (i > 0) {
-				if (word[i] === wordArr[pos - skipped]) {
+			let moved = 0;
+			while (i >= 0) {
+				if (word[i] === wordArr[pos - moved] || 
+					(wordArr[pos - moved] === replacement && !wordArr[pos - moved].match(this.regPattern))
+				) {
 					i -= 1;
 				}
-				skipped += 1;
+				moved += 1;
 			}
-			let len = word.length + skipped;
-			if (replaceAll) {
-				wordArr.splice(pos - len, pos, replacement);
-			} else {
-				wordArr.splice(pos - len, pos, ...new Array(len).fill(replacement));
-			}
+			wordArr.splice(pos - moved + 1, moved, ...new Array(moved).fill(replacement));
 		})
 		return wordArr.join('');
 	}
