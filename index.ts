@@ -163,6 +163,8 @@ export default class AhoCorasick {
 					backNode = backNode.backNode as ACTreeNode;
 				}
 				currentNode = child;
+			} else {
+				currentNode = this.tireTreeRoot; // initial state
 			}
 		}
 		return words;
