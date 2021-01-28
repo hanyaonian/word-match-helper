@@ -1,6 +1,6 @@
 {
   "name": "word-match-helper",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Aho-Corasick based word-matching class. Match & filter words.",
   "source": "index.ts",
   "main": "dist/index.js",
