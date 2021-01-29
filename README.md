@@ -8,7 +8,8 @@ npm install word-match-helper
 
 ### Basic Usage
 ````javascript
-import checker from 'word-match-helper'
+import checker from 'word-match-helper' // es6 module
+var wordMatchHelper = require("word-match-helper").default // commonjs
 
 const wordChecker = new checker(['her', 'he', 'hers']);
 wordChecker.search('ushers');
