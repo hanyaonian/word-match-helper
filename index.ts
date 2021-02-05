@@ -28,7 +28,8 @@ export default class AhoCorasick {
 	 */
 	constructor(wordList: string[], ignorePatt: null | RegExp = /\s+/g) {
 		this.currentState = 0;
-		this.regPattern = ignorePatt || /\\/g;
+		// \0 means match null (U+0000)
+		this.regPattern = ignorePatt || /\0/g;
 		if (typeof ignorePatt != typeof RegExp) {
 			// throw Error('wrong type regexp')
 		}
@@ -77,14 +78,12 @@ export default class AhoCorasick {
                         isMatch: i === len - 1,
 						children: {},
                     };
-				} else if (i === len - 1) {
-                    // short word can't match if dont
-                    currentNodeSet[word[i]].isMatch = true;
-                }
+				}
 				// get next level
                 currentNode = currentNodeSet[word[i]];
                 currentNodeSet = currentNodeSet[word[i]].children;
-            }
+			}
+			currentNode.isMatch = true;
 		});
 		// set backNode
 		this.setBackNode(this.tireTreeRoot);
