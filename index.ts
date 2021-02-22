@@ -1,5 +1,5 @@
 // node structure
-export type ACTreeNode = {
+type ACTreeNode = {
 	char?: string | null,
 	status: number,
 	backNode: ACTreeNode | null,
@@ -9,14 +9,25 @@ export type ACTreeNode = {
 }
 
 // child container
-export type ACTreeContainer = {
+type ACTreeContainer = {
 	[key: string]: ACTreeNode
 }
+
+type searchResult = {
+	pos: number,
+	word: string
+}
+
+type matchOptions = {
+	ignorePatt?: RegExp | null,
+	baseStrict?: boolean 
+} 
 
 export default class AhoCorasick {
 	currentState: number;
 	tireTreeRoot: ACTreeNode;
 	currentWordSet: Set<string>;
+	toLowerCase: boolean;
 	/**
 	 * default is /\s+/g, skip all space
 	 */
@@ -26,9 +37,10 @@ export default class AhoCorasick {
 	 * @param wordList initial word list
 	 * @param ignorePatt Reg pattern
 	 */
-	constructor(wordList: string[], ignorePatt: null | RegExp = /\s+/g) {
+	constructor(wordList: string[], { ignorePatt = /\\/g, baseStrict = false }: matchOptions) {
 		this.currentState = 0;
-		this.regPattern = ignorePatt || /\\/g;
+		this.regPattern = ignorePatt ? ignorePatt : /\\/g;
+		this.toLowerCase = !baseStrict;
 		if (typeof ignorePatt != typeof RegExp) {
 			// throw Error('wrong type regexp')
 		}
@@ -132,7 +144,8 @@ export default class AhoCorasick {
 	 * @param text search text
 	 * 
 	 */
-	public search(text: string) {
+	public search(text: string): searchResult[] {
+		text = this.toLowerCase ? text.toLocaleLowerCase() : text;
 		let words = [];
 		let currentNode = this.tireTreeRoot;
 		for (let i = 0; i < text.length; i++) {
@@ -159,7 +172,7 @@ export default class AhoCorasick {
 				while (backNode && backNode !== this.tireTreeRoot) {
 					if (backNode.isMatch) {
 						words.push({
-							pos: i,
+							pos: i + 1,
 							word: this.getWord(backNode)
 						})
 					}
@@ -223,7 +236,7 @@ export default class AhoCorasick {
 		for (let i = 0; i < len; i++) {
 			const nword = wordList[i].replace(ignorePatt as RegExp, '')
 			if (nword.length > 0) {
-				this.currentWordSet.add(nword)
+				this.currentWordSet.add(this.toLowerCase ? nword.toLocaleLowerCase() : nword);
 			}
 		}
 		return Array.from(this.currentWordSet);

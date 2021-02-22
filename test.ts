@@ -4,7 +4,7 @@ const testCase = [
 	{
 		reg: null,
 		key: ['her', 'he', 's h e', 'hers'],
-		text: "us h ers h e he r",
+		text: "us h ers h e hE r",
 		expect: [
 			{ pos: 5, word: 's h e' },
 			{ pos: 11, word: 's h e' },
@@ -33,7 +33,10 @@ const testCase = [
 ]
 
 for (let i = 0; i < testCase.length; i++) {
-	let th = new textHelper(testCase[i].key, testCase[i].reg);
+	let th = new textHelper(testCase[i].key, {
+		ignorePatt: testCase[i].reg,
+		baseStrict: false
+	});
 	const response = th.search(testCase[i].text);
 	console.log('word:', testCase[i].key, 'text:', testCase[i].text);
 	console.log('match:', response.sort());
