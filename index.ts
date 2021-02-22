@@ -37,9 +37,10 @@ export default class AhoCorasick {
 	 * @param wordList initial word list
 	 * @param ignorePatt Reg pattern
 	 */
-	constructor(wordList: string[], { ignorePatt = /\\/g, baseStrict = false }: matchOptions) {
+	constructor(wordList: string[], { ignorePatt = /\0/g, baseStrict = false }: matchOptions = {}) {
 		this.currentState = 0;
-		this.regPattern = ignorePatt ? ignorePatt : /\\/g;
+		// \0 means match null (U+0000)
+		this.regPattern = ignorePatt ? ignorePatt : /\0/g;
 		this.toLowerCase = !baseStrict;
 		if (typeof ignorePatt != typeof RegExp) {
 			// throw Error('wrong type regexp')
@@ -89,14 +90,12 @@ export default class AhoCorasick {
                         isMatch: i === len - 1,
 						children: {},
                     };
-				} else if (i === len - 1) {
-                    // short word can't match if dont
-                    currentNodeSet[word[i]].isMatch = true;
-                }
+				}
 				// get next level
                 currentNode = currentNodeSet[word[i]];
                 currentNodeSet = currentNodeSet[word[i]].children;
-            }
+			}
+			currentNode.isMatch = true;
 		});
 		// set backNode
 		this.setBackNode(this.tireTreeRoot);
