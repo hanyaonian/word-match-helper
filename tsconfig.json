@@ -8,8 +8,8 @@
     "noImplicitReturns": true,
     "skipLibCheck": true,
     "declaration": true,
-    "suppressImplicitAnyIndexErrors": true
+    "suppressImplicitAnyIndexErrors": true,
   },
-  "include": ["./**/*"],
+  "include": ["./src/*"],
   "exclude": ["./dist/**/*"]
 }
