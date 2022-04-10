@@ -5,7 +5,8 @@
   "source": "index.ts",
   "main": "dist/index.js",
   "scripts": {
-    "test": "tsc && cd ./dist && node test"
+    "build": "tsc",
+    "test": "esno test/index.ts"
   },
   "repository": {
     "type": "git",
@@ -21,5 +22,9 @@
   "bugs": {
     "url": "https://github.com/hanyaonian/word-match-helper/issues"
   },
-  "homepage": "https://github.com/hanyaonian/word-match-helper#readme"
+  "homepage": "https://github.com/hanyaonian/word-match-helper#readme",
+  "devDependencies": {
+    "esno": "^0.14.1",
+    "vite": "^2.9.1"
+  }
 }

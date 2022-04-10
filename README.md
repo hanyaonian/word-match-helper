@@ -1,40 +1,55 @@
 # word-match-helper
+
 Aho–Corasick based word checking. Match & filter words.
 
-### install
-````
+## install
+
+````sh
 npm install word-match-helper
 ````
 
-### Basic Usage
-````javascript
-import checker from 'word-match-helper' // es6 module
-var wordMatchHelper = require("word-match-helper").default // commonjs
+## Basic Usage
 
-const wordChecker = new checker(['her', 'he', 'hers']);
+````javascript
+import checker from 'word-match-helper';
+
+const wordChecker = new checker({
+  targets: ['her', 'he', 'hers'],
+});
 wordChecker.search('ushers');
 /* excepted:
-*    [{ pos: 5, word: 'hers' },
+*  [
+*    { pos: 5, word: 'hers' },
 *    { pos: 4, word: 'he' },
-*    { pos: 5, word: 'her' }]
+*    { pos: 5, word: 'her' }
+*  ]
 */
 
 // add additional word list 
 wordChecker.addWord(['she'])
 wordChecker.search('ushers');
 /* excepted:
-*   [{ pos: 4, word: 'she' },
+*  [
+     { pos: 4, word: 'she' },
 *    { pos: 6, word: 'hers' },
 *    { pos: 4, word: 'he' },
-*    { pos: 5, word: 'her' }]
+*    { pos: 5, word: 'her' }
+*  ]
 */
 ````
 
-### skip special character
+### extra options
+
+- `ignorePatt`: Regexpression. default is /\0/g, match null.
+- `baseStrict`: Boolean. default is false. If false, 'App' match 'app', if true, 'App' won't mathc 'app'
+
+#### skip special character
+
 ````js
 // pass customize reg expression to skip confusion charater
 // e.g skip spaces and '*'
-const wordChecker = new checker(['shit'], {
+const wordChecker = new checker({
+  targets: ['shit'],
   ignorePatt: /\s+|\*/g
 });
 wordChecker.search('13213 s h ** i t');
@@ -43,15 +58,13 @@ wordChecker.search('13213 s h ** i t');
 */
 ````
 
-### options
-- ignorePatt: Regexpression. default is /\0/g, match null.
-- baseStrict: Boolean. default is false. If false, 'App' match 'app', if true, 'App' won't mathc 'app'
+#### block word
 
-### block word
 ````js
-const wordChecker = new checker(['shit'], {
+const wordChecker = new checker({
   ignorePatt: /\s+|\*/g,
-  baseStrict: true
+  baseStrict: true,
+  targets: ['shit'],
 });
 wordChecker.filter('13213 s h ** i t', '*');
 /* excecpted
