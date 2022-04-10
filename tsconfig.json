@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "module": "umd",
+    "module": "esnext",
     "outDir": "./dist",
     "strict": true,
     "noImplicitAny": true,
