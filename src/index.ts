@@ -1,5 +1,5 @@
-import AhoCorasick from './trees';
+import WordMatcher from './trees';
 
-export { AhoCorasick };
+export { default as WordMatcher } from './trees';
 
-export default AhoCorasick;
+export default WordMatcher;

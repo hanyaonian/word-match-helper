@@ -1,6 +1,6 @@
 // node structure
 export type ACTreeNode = {
-  char?: string | null,
+  char: string | null,
   status: number,
   backNode: ACTreeNode | null,
   parent: ACTreeNode | null,
