@@ -19,6 +19,19 @@ export class Node {
     this.backNode = params.back_node ?? null;
   }
 
+  public getWord(): string {
+    if (!this.isMatch) {
+      return '';
+    }
+    let temp_node: Node | null = this;
+    const words: string[] = [];
+    while (temp_node?.parent && temp_node.char) {
+      words.unshift(temp_node.char);
+      temp_node = temp_node.parent;
+    }
+    return words.join('');
+  }
+
   public getChildNodeList(): Node[] {
     const result: Node[] = [];
     Object.keys(this.children).forEach(key => {
@@ -27,7 +40,11 @@ export class Node {
     return result;
   }
 
-  public setChildren(params: {
+  public getChild(char: string) {
+    return this.children[char];
+  }
+
+  public setChild(params: {
     char: string,
     root: Node,
     is_match: boolean,
@@ -41,6 +58,5 @@ export class Node {
         back_node: root,
       });
     }
-    return this.children[char];
   }
 }

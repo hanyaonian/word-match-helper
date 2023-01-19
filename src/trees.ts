@@ -3,8 +3,7 @@ import { Node } from "./node";
 
 export default class AhoCorasick {
   private root: Node;
-  public currentState: number = 0;
-  public wordset: Set<string> = new Set();
+  public wordset: Set<string>;
 
   constructor(config: { targets: string[] }) {
     const { targets } = config;
@@ -13,33 +12,40 @@ export default class AhoCorasick {
     this.root = new Node({
       char: null,
     });
-
-    this.initACStateTree(targets);
+    this.wordset = new Set(targets);
+    this.addACStateTreeNode(targets);
   }
 
   public addWord(wordlist: string[]): void {
-    this.initACStateTree(wordlist);
+    const newWords: string[] = [];
+    wordlist.forEach(word => {
+      if (!this.wordset.has(word)) {
+        newWords.push(word);
+        this.wordset.add(word);
+      }
+    });
+    this.addACStateTreeNode(newWords);
   }
 
-  private initACStateTree(wordlist: string[]): void {
+  private addACStateTreeNode(wordlist: string[]): void {
     const words = arrayDeduplication(wordlist);
     words.forEach((word) => {
       let currentNode = this.root;
       let len = word.length;
       for (let i = 0; i < len; i++) {
-        const child = currentNode.setChildren({
+        currentNode.setChild({
           char: word[i],
           root: this.root,
           is_match: i === len - 1, // state match words end
         });
         // get next level
-        currentNode = child;
+        currentNode = currentNode.getChild(word[i]);
       }
       // todo: fix this
       currentNode.isMatch = true;
     });
     // set backNode
-    this.setBackNode(this.root);
+    this.setBackNode();
   }
 
   /**
@@ -53,8 +59,8 @@ export default class AhoCorasick {
    * 4. (loop) childNode of parentNode's backNode doesn't fit current node,
    *    continue to find parentNode's parentNode
    */
-  private setBackNode(node: Node): void {
-    let currentNodeArr = node.getChildNodeList();
+  private setBackNode(): void {
+    let currentNodeArr = this.root.getChildNodeList();
     while (currentNodeArr.length > 0) {
       let childNodeArr = [];
       for (let i = 0; i < currentNodeArr.length; i++) {
@@ -108,7 +114,7 @@ export default class AhoCorasick {
           if (backNode.isMatch) {
             words.push({
               pos: i + 1,
-              word: this.getWord(backNode),
+              word: backNode.getWord(),
             });
           }
           backNode = backNode.backNode as Node;
@@ -119,14 +125,5 @@ export default class AhoCorasick {
       }
     }
     return words;
-  }
-
-  private getWord(node: Node): string {
-    let word = "";
-    while (node.parent && node.char) {
-      word = node.char + word;
-      node = node.parent;
-    }
-    return word;
   }
 }
